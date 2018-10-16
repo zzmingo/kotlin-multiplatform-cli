@@ -1,0 +1,11 @@
+rootProject.name = '<%= projectName %>'
+
+include ':common'
+include ':android'
+include ':ios'
+include ':web'
+
+project(':common').projectDir = file('common')
+project(':android').projectDir = file('android')
+project(':ios').projectDir = file('ios')
+project(':web').projectDir = file('web')

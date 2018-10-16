@@ -1,0 +1,52 @@
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'com.moowork.node'
+
+group = "$bundleId"
+version = 1.0
+
+compileKotlin2Js {
+    kotlinOptions {
+        moduleKind = "commonjs"
+        sourceMap = true
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions {
+        moduleKind = "commonjs"
+        sourceMap = true
+    }
+}
+
+kotlin { experimental { coroutines 'enable' } }
+
+dependencies {
+    expectedBy project(':common')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinx_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serialization_version"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+}
+
+node {
+    download = false
+}
+
+task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
+    from compileKotlin2Js.destinationDir
+
+    configurations.testCompile.each {
+        from zipTree(it.absolutePath).matching { include '*.js' }
+    }
+
+    into "${buildDir}/node_modules"
+}
+
+task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules]) {
+    script = file('node_modules/mocha/bin/mocha')
+    args = [compileTestKotlin2Js.outputFile]
+}
+
+test.dependsOn runMocha

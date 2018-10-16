@@ -1,0 +1,44 @@
+apply plugin: 'kotlin-platform-native'
+apply plugin: 'kotlinx-serialization'
+
+sourceSets {
+    main {
+        kotlin.srcDir 'src'
+        component {
+            baseName.set("<%= projectName %>")
+            targets = ['ios_arm32', 'ios_arm64', 'ios_x64']
+            outputKinds = [FRAMEWORK]
+        }
+    }
+    test {
+        component {
+            targets = ['ios_x64']
+        }
+    }
+}
+
+task copyFramework() {
+    doLast {
+        def srcFile = tasks['compileDebugIos_x64KotlinNative'].outputFile
+        def targetDir = getProperty("konan.configuration.build.dir")
+        copy {
+            from srcFile.parent
+            into targetDir
+            include "${projectName}.framework/**"
+            include "${projectName}.framework.dSYM"
+        }
+    }
+}
+
+afterEvaluate { project ->
+    project.task('test', dependsOn: 'compileTestDebugKotlinNative', type: Exec, overwrite: true) {
+        def textExecutable = tasks["compileTestDebugKotlinNative"].outputFile
+        commandLine("xcrun", "simctl", "spawn", "iPhone 8", textExecutable)
+    }
+}
+
+dependencies {
+    expectedBy project(':common')
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlinx_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version"
+}

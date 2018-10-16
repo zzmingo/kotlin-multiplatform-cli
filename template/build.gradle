@@ -1,0 +1,40 @@
+// Set up a buildscript dependency on the Kotlin plugin.
+buildscript {
+    // Specify a Kotlin version you need.
+    ext.bundleId = "<%= bundleId %>"
+    ext.projectName = "<%= projectName %>"
+    ext.kotlin_version = '1.2.61'
+    ext.konan_version = '0.9'
+    ext.kotlinx_coroutines_version = '0.26.0'
+    ext.serialization_version = '0.6.1'
+
+    repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+    }
+
+    // Specify all the plugins used as dependencies
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.0-alpha08'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$konan_version"
+        classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version"
+        classpath 'com.moowork.gradle:gradle-node-plugin:1.2.0'
+    }
+}
+
+// Set up compilation dependency repositories for all projects.
+subprojects {
+    repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+    }
+}
