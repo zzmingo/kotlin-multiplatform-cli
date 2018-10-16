@@ -27,7 +27,7 @@ prompts(questions).then(res => {
     return
   }
 
-  if (!res.generate) {
+  if (res.generate === false) {
     return
   }
 
@@ -41,6 +41,8 @@ prompts(questions).then(res => {
       })
     }
   })
+
+  console.log('generated at ' + projectPath)
 
 }).catch(error => {
   console.log(error)
