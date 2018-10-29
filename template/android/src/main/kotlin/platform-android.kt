@@ -1,8 +1,5 @@
 package <%= bundleId %>
 
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-
 actual class Platform actual constructor() {
 
   actual companion object {
